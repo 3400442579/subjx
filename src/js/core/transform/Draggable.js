@@ -1,6 +1,6 @@
 import { helper } from '../Helper';
 import Transformable from './Transformable';
-import { floatToFixed } from './common';
+//import { floatToFixed } from './common';
 import { isDef, isUndef } from '../util/util';
 
 import {
@@ -25,11 +25,11 @@ export default class Draggable extends Transformable {
 
     _init(el) {
         const {
-            rotationPoint,
+            //rotationPoint,
             container,
             resizable,
-            rotatable,
-            showNormal,
+            //rotatable,
+            //showNormal,
             resizeHandles,
             className
         } = this.options;
@@ -76,18 +76,19 @@ export default class Draggable extends Transformable {
             mr: ['sjx-hdl', 'sjx-hdl-m', 'sjx-hdl-r', 'sjx-hdl-mr']
         };
 
-        const rotationHandles = {
-            normal: showNormal ? ['sjx-normal'] : null,
-            rotator: ['sjx-hdl', 'sjx-hdl-m', 'sjx-rotator']
-        };
+        //const rotationHandles = {
+        //    normal: showNormal ? ['sjx-normal'] : null,
+        //    rotator: ['sjx-hdl', 'sjx-hdl-m', 'sjx-rotator']
+        //};
 
-        const handles = {
-            ...(rotatable && rotationHandles),
-            ...(resizable && resizingHandles),
-            center: rotationPoint && rotatable
-                ? ['sjx-hdl', 'sjx-hdl-m', 'sjx-hdl-c', 'sjx-hdl-mc'] 
-                : undefined
-        };
+        const handles = { ...(resizable && resizingHandles) };
+        //const handles = {
+        //    //...(rotatable && rotationHandles),
+        //    ...(resizable && resizingHandles),
+        //    //center: rotationPoint && rotatable
+        //    //    ? ['sjx-hdl', 'sjx-hdl-m', 'sjx-hdl-c', 'sjx-hdl-mc'] 
+        //    //    : undefined
+        //};
 
         Object.keys(handles).forEach(key => {
             const dt=resizeHandles[key];
@@ -99,13 +100,13 @@ export default class Draggable extends Transformable {
             controls.appendChild(handler);
         });
 
-        if (isDef(handles.center)) {
-            const cHandle = helper(handles.center);
-            cHandle.css({
-                left: `${el.getAttribute('data-cx')}px`,
-                top: `${el.getAttribute('data-cy')}px`
-            });
-        }
+        //if (isDef(handles.center)) {
+        //    const cHandle = helper(handles.center);
+        //    cHandle.css({
+        //        left: `${el.getAttribute('data-cx')}px`,
+        //        top: `${el.getAttribute('data-cy')}px`
+        //    });
+        //}
 
         wrapper.appendChild(controls);
 
@@ -371,6 +372,7 @@ export default class Draggable extends Transformable {
         return nMatrix;
     }
 
+    /*
     _processRotate(radians) {
         const {
             el,
@@ -429,7 +431,7 @@ export default class Draggable extends Transformable {
 
         return resMatrix;
     }
-
+    */
     _getState(params) {
         const {
             revX,
@@ -566,6 +568,7 @@ export default class Draggable extends Transformable {
         );
     }
 
+    /*
     resetCenterPoint() {
         const {
             handles: { center }
@@ -577,7 +580,7 @@ export default class Draggable extends Transformable {
                 top: null
             }
         );
-    }
+    }*/
 
     fitControlsToSize() {}
 

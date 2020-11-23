@@ -1,5 +1,5 @@
-export const RAD = Math.PI / 180;
-export const DEG = 180 / Math.PI;
+//export const RAD = Math.PI / 180;
+//export const DEG = 180 / Math.PI;
 
 export const snapToGrid = (value, snap) => {
     if (snap === 0) {

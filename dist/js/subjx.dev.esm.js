@@ -524,7 +524,8 @@ const EVENTS = [
     'setPointEnd'
 ];
 
-const RAD = Math.PI / 180;
+//export const RAD = Math.PI / 180;
+//export const DEG = 180 / Math.PI;
 
 const snapToGrid = (value, snap) => {
     if (snap === 0) {
@@ -635,6 +636,7 @@ class Transformable extends SubjectModel {
         throw Error(`'_cursorPoint()' method not implemented`);
     }
 
+    /*
     _rotate({ radians, ...rest }) {
         const resultMtrx = this._processRotate(radians);
         const finalArgs = {
@@ -644,7 +646,7 @@ class Transformable extends SubjectModel {
         };
         this.proxyMethods.onRotate.call(this, finalArgs);
         this._emitEvent('rotate', finalArgs);
-    }
+    }*/
 
     _resize({ dx, dy, ...rest }) {
         const finalValues = this._processResize(dx, dy);
@@ -665,14 +667,14 @@ class Transformable extends SubjectModel {
 
         const _snap = {
             x: 10,
-            y: 10,
-            angle: 10 * RAD
+            y: 10//,
+            //angle: 10 * RAD
         };
 
         const _each = {
             move: false,
-            resize: false,
-            rotate: false
+            resize: false//,
+            //rotate: false
         };
 
         let _restrict = null,
@@ -680,20 +682,20 @@ class Transformable extends SubjectModel {
             _axis = 'xy',
             _cursorMove = 'auto',
             _cursorResize = 'auto',
-            _cursorRotate = 'auto',
-            _rotationPoint = false,
+            //_cursorRotate = 'auto',
+            //_rotationPoint = false,
             _draggable = true,
             _resizable = true,
-            _rotatable = true,
-            _rotatorAnchor = null,
-            _rotatorOffset = 50,
-            _showNormal = true,
+            //_rotatable = true,
+            //_rotatorAnchor = null,
+            //_rotatorOffset = 50,
+            //_showNormal = true,
             _custom = null,
             _resizeHandles = null,
             _className = null,
             _onInit = () => { },
             _onMove = () => { },
-            _onRotate = () => { },
+            //_onRotate = () => { },
             _onResize = () => { },
             _onDrop = () => { },
             _onDestroy = () => { };
@@ -707,44 +709,44 @@ class Transformable extends SubjectModel {
                 axis,
                 cursorMove,
                 cursorResize,
-                cursorRotate,
-                rotationPoint,
+                //cursorRotate,
+                //rotationPoint,
                 restrict,
                 draggable,
                 resizable,
-                rotatable,
+                //rotatable,
                 onInit,
                 onDrop,
                 onMove,
                 onResize,
-                onRotate,
+                //onRotate,
                 onDestroy,
                 container,
                 proportions,
                 custom,
-                rotatorAnchor,
-                rotatorOffset,
-                showNormal,
+                //rotatorAnchor,
+                //rotatorOffset,
+                //showNormal,
                 resizeHandles,
                 className
             } = options;
 
             if (isDef(snap)) {
-                const { x, y, angle } = snap;
+                const { x, y/*, angle*/ } = snap;
 
                 _snap.x = isUndef(x) ? 10 : x;
                 _snap.y = isUndef(y) ? 10 : y;
-                _snap.angle = isUndef(angle)
-                    ? _snap.angle
-                    : angle * RAD;
+                //_snap.angle = isUndef(angle)
+                //    ? _snap.angle
+                //    : angle * RAD;
             }
 
             if (isDef(each)) {
-                const { move, resize, rotate } = each;
+                const { move, resize/*, rotate*/ } = each;
 
                 _each.move = move || false;
                 _each.resize = resize || false;
-                _each.rotate = rotate || false;
+                //_each.rotate = rotate || false;
             }
 
             if (isDef(restrict)) {
@@ -755,24 +757,24 @@ class Transformable extends SubjectModel {
 
             _cursorMove = cursorMove || 'auto';
             _cursorResize = cursorResize || 'auto';
-            _cursorRotate = cursorRotate || 'auto';
+            //_cursorRotate = cursorRotate || 'auto';
             _axis = axis || 'xy';
 
             _container = isDef(container) && helper(container)[0]
                 ? helper(container)[0]
                 : _container;
 
-            _rotationPoint = rotationPoint || false;
+            //_rotationPoint = rotationPoint || false;
             _proportions = proportions || false;
 
             _draggable = isDef(draggable) ? draggable : true;
             _resizable = isDef(resizable) ? resizable : true;
-            _rotatable = isDef(rotatable) ? rotatable : true;
+            //_rotatable = isDef(rotatable) ? rotatable : true;
 
             _custom = (typeof custom === 'object' && custom) || null;
-            _rotatorAnchor = rotatorAnchor || null;
-            _rotatorOffset = rotatorOffset || 50;
-            _showNormal = isDef(showNormal) ? showNormal : true;
+            //_rotatorAnchor = rotatorAnchor || null;
+            // _rotatorOffset = rotatorOffset || 50; 
+            // _showNormal = isDef(showNormal) ? showNormal : true;
             _resizeHandles = isDef(resizeHandles) ? resizeHandles : null;
             _className = isDef(className) ? className : null;
 
@@ -780,16 +782,16 @@ class Transformable extends SubjectModel {
             _onDrop = createMethod(onDrop);
             _onMove = createMethod(onMove);
             _onResize = createMethod(onResize);
-            _onRotate = createMethod(onRotate);
+            //_onRotate = createMethod(onRotate);
             _onDestroy = createMethod(onDestroy);
         }
 
         this.options = {
             axis: _axis,
             cursorMove: _cursorMove,
-            cursorRotate: _cursorRotate,
+            //cursorRotate: _cursorRotate,
             cursorResize: _cursorResize,
-            rotationPoint: _rotationPoint,
+            //rotationPoint: _rotationPoint,
             restrict: _restrict,
             container: _container,
             snap: _snap,
@@ -797,11 +799,11 @@ class Transformable extends SubjectModel {
             proportions: _proportions,
             draggable: _draggable,
             resizable: _resizable,
-            rotatable: _rotatable,
+            //rotatable: _rotatable,
             custom: _custom,
-            rotatorAnchor: _rotatorAnchor,
-            rotatorOffset: _rotatorOffset,
-            showNormal: _showNormal,
+            //rotatorAnchor: _rotatorAnchor,
+            //rotatorOffset: _rotatorOffset,
+            //showNormal: _showNormal,
             resizeHandles:_resizeHandles,
             className:_className
         };
@@ -811,7 +813,7 @@ class Transformable extends SubjectModel {
             onDrop: _onDrop,
             onMove: _onMove,
             onResize: _onResize,
-            onRotate: _onRotate,
+            //onRotate: _onRotate,
             onDestroy: _onDestroy
         };
 
@@ -840,8 +842,8 @@ class Transformable extends SubjectModel {
             clientY,
             doDrag,
             doResize,
-            doRotate,
-            doSetCenter,
+            //doRotate,
+            //doSetCenter,
             revX,
             revY
         } = storage;
@@ -850,13 +852,13 @@ class Transformable extends SubjectModel {
             snap,
             each: {
                 move: moveEach,
-                resize: resizeEach,
-                rotate: rotateEach
+                resize: resizeEach//,
+                //rotate: rotateEach
             },
             restrict,
             draggable,
-            resizable,
-            rotatable
+            resizable//,
+            //rotatable
         } = options;
 
         if (doResize && resizable) {
@@ -974,6 +976,7 @@ class Transformable extends SubjectModel {
             }
         }
 
+        /*
         if (doRotate && rotatable) {
             const {
                 pressang,
@@ -1026,6 +1029,7 @@ class Transformable extends SubjectModel {
                 y - by
             );
         }
+        */
     }
 
     _start(e) {
@@ -1066,8 +1070,8 @@ class Transformable extends SubjectModel {
         } = storage;
 
         const {
-            rotator,
-            center,
+            //rotator,
+            //center,
             radius
         } = handles;
 
@@ -1075,12 +1079,12 @@ class Transformable extends SubjectModel {
             removeClass(radius, 'sjx-hidden');
         }
 
-        const doRotate = handle.is(rotator),
-            doSetCenter = isDef(center)
-                ? handle.is(center)
-                : false;
+        //const doRotate = handle.is(rotator),
+        //    doSetCenter = isDef(center)
+        //        ? handle.is(center)
+        //        : false;
 
-        const doDrag = !(doRotate || doResize || doSetCenter);
+        const doDrag = !(/*doRotate ||*/ doResize /*|| doSetCenter*/);
 
         const {
             clientX,
@@ -1118,8 +1122,8 @@ class Transformable extends SubjectModel {
             by,
             doResize,
             doDrag,
-            doRotate,
-            doSetCenter,
+            //doRotate,
+            //doSetCenter,
             onExecution: true,
             cursor: null,
             elementOffset: getOffset(el),
@@ -1158,25 +1162,25 @@ class Transformable extends SubjectModel {
 
         if (doResize) {
             this._emitEvent('resizeStart', eventArgs);
-        } else if (doRotate) {
-            this._emitEvent('rotateStart', eventArgs);
+        //} else if (doRotate) {
+        //   this._emitEvent('rotateStart', eventArgs);
         } else if (doDrag) {
             this._emitEvent('dragStart', eventArgs);
         }
 
         const {
             move,
-            resize,
-            rotate
+            resize//,
+            //rotate
         } = each;
 
         const actionName = doResize
             ? 'resize'
-            : (doRotate ? 'rotate' : 'drag');
+            : /*(doRotate ? 'rotate' :*/ 'drag';//);
 
         const triggerEvent =
             (doResize && resize) ||
-            (doRotate && rotate) ||
+            //(doRotate && rotate) ||
             (doDrag && move);
 
         observable.notify(
@@ -1215,7 +1219,7 @@ class Transformable extends SubjectModel {
         storage.doDraw = true;
 
         let {
-            doRotate,
+            //doRotate,
             doDrag,
             doResize,
             cursor
@@ -1223,15 +1227,15 @@ class Transformable extends SubjectModel {
 
         const {
             cursorMove,
-            cursorResize,
-            cursorRotate
+            cursorResize//,
+            //cursorRotate
         } = options;
 
         if (isUndef(cursor)) {
             if (doDrag) {
                 cursor = cursorMove;
-            } else if (doRotate) {
-                cursor = cursorRotate;
+            //} else if (doRotate) {
+            //    cursor = cursorRotate;
             } else if (doResize) {
                 cursor = cursorResize;
             }
@@ -1250,7 +1254,7 @@ class Transformable extends SubjectModel {
         const {
             doResize,
             doDrag,
-            doRotate,
+            //doRotate,
             //doSetCenter,
             frame,
             handles: { radius }
@@ -1258,11 +1262,11 @@ class Transformable extends SubjectModel {
 
         const actionName = doResize
             ? 'resize'
-            : (doDrag ? 'drag' : 'rotate');
+            : 'drag';///*(doDrag ? */'drag' /*: 'rotate')*/;
 
         storage.doResize = false;
         storage.doDrag = false;
-        storage.doRotate = false;
+        //storage.doRotate = false;
         storage.doSetCenter = false;
         storage.doDraw = false;
         storage.onExecution = false;
@@ -1279,21 +1283,21 @@ class Transformable extends SubjectModel {
 
         if (doResize) {
             this._emitEvent('resizeEnd', eventArgs);
-        } else if (doRotate) {
-            this._emitEvent('rotateEnd', eventArgs);
+        //} else if (doRotate) {
+        //    this._emitEvent('rotateEnd', eventArgs);
         } else if (doDrag) {
             this._emitEvent('dragEnd', eventArgs);
         }
 
         const {
             move,
-            resize,
-            rotate
+            resize//,
+            //rotate
         } = each;
 
         const triggerEvent =
             (doResize && resize) ||
-            (doRotate && rotate) ||
+            //(doRotate && rotate) ||
             (doDrag && move);
 
         observable.notify(
@@ -1394,7 +1398,7 @@ class Transformable extends SubjectModel {
         this._drag(...arguments);
     }
 
-    notifyRotate({ radians, ...rest }) {
+    /*notifyRotate({ radians, ...rest }) {
         const {
             snap: { angle }
         } = this.options;
@@ -1405,7 +1409,7 @@ class Transformable extends SubjectModel {
                 ...rest
             }
         );
-    }
+    }*/
 
     notifyResize() {
         this._resize(...arguments);
@@ -1433,10 +1437,10 @@ class Transformable extends SubjectModel {
         }
     }
 
-    subscribe({ resize, move, rotate }) {
+    subscribe({ resize, move/*, rotate*/ }) {
         const { observable: ob } = this;
 
-        if (move || resize || rotate) {
+        if (move || resize /*|| rotate*/) {
             ob.subscribe('ongetstate', this)
                 .subscribe('onapply', this);
         }
@@ -1447,9 +1451,9 @@ class Transformable extends SubjectModel {
         if (resize) {
             ob.subscribe('onresize', this);
         }
-        if (rotate) {
-            ob.subscribe('onrotate', this);
-        }
+        //if (rotate) {
+        //    ob.subscribe('onrotate', this);
+        //}
     }
 
     unsubscribe() {
@@ -1458,8 +1462,7 @@ class Transformable extends SubjectModel {
         ob.unsubscribe('ongetstate', this)
             .unsubscribe('onapply', this)
             .unsubscribe('onmove', this)
-            .unsubscribe('onresize', this)
-            .unsubscribe('onrotate', this);
+            .unsubscribe('onresize', this);//.unsubscribe('onrotate', this);
     }
 
     disable() {
@@ -1526,7 +1529,7 @@ class Transformable extends SubjectModel {
         this._apply('resize');
     }
 
-    exeRotate({ delta }) {
+    /*exeRotate({ delta }) {
         const { rotatable } = this.options;
         if (!rotatable) return;
 
@@ -1542,7 +1545,7 @@ class Transformable extends SubjectModel {
 
         this._rotate({ radians: delta });
         this._apply('rotate');
-    }
+    }*/
 
 }
 
@@ -1753,11 +1756,11 @@ class Draggable extends Transformable {
 
     _init(el) {
         const {
-            rotationPoint,
+            //rotationPoint,
             container,
             resizable,
-            rotatable,
-            showNormal,
+            //rotatable,
+            //showNormal,
             resizeHandles,
             className
         } = this.options;
@@ -1804,18 +1807,19 @@ class Draggable extends Transformable {
             mr: ['sjx-hdl', 'sjx-hdl-m', 'sjx-hdl-r', 'sjx-hdl-mr']
         };
 
-        const rotationHandles = {
-            normal: showNormal ? ['sjx-normal'] : null,
-            rotator: ['sjx-hdl', 'sjx-hdl-m', 'sjx-rotator']
-        };
+        //const rotationHandles = {
+        //    normal: showNormal ? ['sjx-normal'] : null,
+        //    rotator: ['sjx-hdl', 'sjx-hdl-m', 'sjx-rotator']
+        //};
 
-        const handles = {
-            ...(rotatable && rotationHandles),
-            ...(resizable && resizingHandles),
-            center: rotationPoint && rotatable
-                ? ['sjx-hdl', 'sjx-hdl-m', 'sjx-hdl-c', 'sjx-hdl-mc'] 
-                : undefined
-        };
+        const handles = { ...(resizable && resizingHandles) };
+        //const handles = {
+        //    //...(rotatable && rotationHandles),
+        //    ...(resizable && resizingHandles),
+        //    //center: rotationPoint && rotatable
+        //    //    ? ['sjx-hdl', 'sjx-hdl-m', 'sjx-hdl-c', 'sjx-hdl-mc'] 
+        //    //    : undefined
+        //};
 
         Object.keys(handles).forEach(key => {
             const dt=resizeHandles[key];
@@ -1827,13 +1831,13 @@ class Draggable extends Transformable {
             controls.appendChild(handler);
         });
 
-        if (isDef(handles.center)) {
-            const cHandle = helper(handles.center);
-            cHandle.css({
-                left: `${el.getAttribute('data-cx')}px`,
-                top: `${el.getAttribute('data-cy')}px`
-            });
-        }
+        //if (isDef(handles.center)) {
+        //    const cHandle = helper(handles.center);
+        //    cHandle.css({
+        //        left: `${el.getAttribute('data-cx')}px`,
+        //        top: `${el.getAttribute('data-cy')}px`
+        //    });
+        //}
 
         wrapper.appendChild(controls);
 
@@ -2099,6 +2103,7 @@ class Draggable extends Transformable {
         return nMatrix;
     }
 
+    /*
     _processRotate(radians) {
         const {
             el,
@@ -2157,7 +2162,7 @@ class Draggable extends Transformable {
 
         return resMatrix;
     }
-
+    */
     _getState(params) {
         const {
             revX,
@@ -2294,6 +2299,7 @@ class Draggable extends Transformable {
         );
     }
 
+    /*
     resetCenterPoint() {
         const {
             handles: { center }
@@ -2305,7 +2311,7 @@ class Draggable extends Transformable {
                 top: null
             }
         );
-    }
+    }*/
 
     fitControlsToSize() {}
 

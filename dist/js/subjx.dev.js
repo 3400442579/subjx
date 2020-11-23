@@ -802,7 +802,8 @@
 
     var EVENTS = ['dragStart', 'drag', 'dragEnd', 'resizeStart', 'resize', 'resizeEnd', 'rotateStart', 'rotate', 'rotateEnd', 'setPointStart', 'setPointEnd'];
 
-    var RAD = Math.PI / 180;
+    //export const RAD = Math.PI / 180;
+    //export const DEG = 180 / Math.PI;
     var snapToGrid = function snapToGrid(value, snap) {
       if (snap === 0) {
         return value;
@@ -913,29 +914,24 @@
         value: function _cursorPoint() {
           throw Error("'_cursorPoint()' method not implemented");
         }
-      }, {
-        key: "_rotate",
-        value: function _rotate(_ref) {
-          var radians = _ref.radians,
-              rest = _objectWithoutProperties(_ref, ["radians"]);
+        /*
+        _rotate({ radians, ...rest }) {
+            const resultMtrx = this._processRotate(radians);
+            const finalArgs = {
+                transform: resultMtrx,
+                delta: radians,
+                ...rest
+            };
+            this.proxyMethods.onRotate.call(this, finalArgs);
+            this._emitEvent('rotate', finalArgs);
+        }*/
 
-          var resultMtrx = this._processRotate(radians);
-
-          var finalArgs = _objectSpread2({
-            transform: resultMtrx,
-            delta: radians
-          }, rest);
-
-          this.proxyMethods.onRotate.call(this, finalArgs);
-
-          this._emitEvent('rotate', finalArgs);
-        }
       }, {
         key: "_resize",
-        value: function _resize(_ref2) {
-          var dx = _ref2.dx,
-              dy = _ref2.dy,
-              rest = _objectWithoutProperties(_ref2, ["dx", "dy"]);
+        value: function _resize(_ref) {
+          var dx = _ref.dx,
+              dy = _ref.dy,
+              rest = _objectWithoutProperties(_ref, ["dx", "dy"]);
 
           var finalValues = this._processResize(dx, dy);
 
@@ -955,13 +951,15 @@
           addClass(el, 'sjx-drag');
           var _snap = {
             x: 10,
-            y: 10,
-            angle: 10 * RAD
+            y: 10 //,
+            //angle: 10 * RAD
+
           };
           var _each = {
             move: false,
-            resize: false,
-            rotate: false
+            resize: false //,
+            //rotate: false
+
           };
 
           var _restrict = null,
@@ -969,21 +967,21 @@
               _axis = 'xy',
               _cursorMove = 'auto',
               _cursorResize = 'auto',
-              _cursorRotate = 'auto',
-              _rotationPoint = false,
-              _draggable = true,
+              //_cursorRotate = 'auto',
+          //_rotationPoint = false,
+          _draggable = true,
               _resizable = true,
-              _rotatable = true,
-              _rotatorAnchor = null,
-              _rotatorOffset = 50,
-              _showNormal = true,
-              _custom = null,
+              //_rotatable = true,
+          //_rotatorAnchor = null,
+          //_rotatorOffset = 50,
+          //_showNormal = true,
+          _custom = null,
               _resizeHandles = null,
               _className = null,
               _onInit = function _onInit() {},
               _onMove = function _onMove() {},
-              _onRotate = function _onRotate() {},
-              _onResize = function _onResize() {},
+              //_onRotate = () => { },
+          _onResize = function _onResize() {},
               _onDrop = function _onDrop() {},
               _onDestroy = function _onDestroy() {};
 
@@ -995,43 +993,34 @@
                 axis = options.axis,
                 cursorMove = options.cursorMove,
                 cursorResize = options.cursorResize,
-                cursorRotate = options.cursorRotate,
-                rotationPoint = options.rotationPoint,
                 restrict = options.restrict,
                 draggable = options.draggable,
                 resizable = options.resizable,
-                rotatable = options.rotatable,
                 onInit = options.onInit,
                 onDrop = options.onDrop,
                 onMove = options.onMove,
                 onResize = options.onResize,
-                onRotate = options.onRotate,
                 onDestroy = options.onDestroy,
                 container = options.container,
                 proportions = options.proportions,
                 custom = options.custom,
-                rotatorAnchor = options.rotatorAnchor,
-                rotatorOffset = options.rotatorOffset,
-                showNormal = options.showNormal,
                 resizeHandles = options.resizeHandles,
                 className = options.className;
 
             if (isDef(snap)) {
               var x = snap.x,
-                  y = snap.y,
-                  angle = snap.angle;
+                  y = snap.y;
               _snap.x = isUndef(x) ? 10 : x;
-              _snap.y = isUndef(y) ? 10 : y;
-              _snap.angle = isUndef(angle) ? _snap.angle : angle * RAD;
+              _snap.y = isUndef(y) ? 10 : y; //_snap.angle = isUndef(angle)
+              //    ? _snap.angle
+              //    : angle * RAD;
             }
 
             if (isDef(each)) {
               var move = each.move,
-                  resize = each.resize,
-                  rotate = each.rotate;
+                  resize = each.resize;
               _each.move = move || false;
-              _each.resize = resize || false;
-              _each.rotate = rotate || false;
+              _each.resize = resize || false; //_each.rotate = rotate || false;
             }
 
             if (isDef(restrict)) {
@@ -1039,35 +1028,35 @@
             }
 
             _cursorMove = cursorMove || 'auto';
-            _cursorResize = cursorResize || 'auto';
-            _cursorRotate = cursorRotate || 'auto';
+            _cursorResize = cursorResize || 'auto'; //_cursorRotate = cursorRotate || 'auto';
+
             _axis = axis || 'xy';
-            _container = isDef(container) && helper(container)[0] ? helper(container)[0] : _container;
-            _rotationPoint = rotationPoint || false;
+            _container = isDef(container) && helper(container)[0] ? helper(container)[0] : _container; //_rotationPoint = rotationPoint || false;
+
             _proportions = proportions || false;
             _draggable = isDef(draggable) ? draggable : true;
-            _resizable = isDef(resizable) ? resizable : true;
-            _rotatable = isDef(rotatable) ? rotatable : true;
-            _custom = _typeof(custom) === 'object' && custom || null;
-            _rotatorAnchor = rotatorAnchor || null;
-            _rotatorOffset = rotatorOffset || 50;
-            _showNormal = isDef(showNormal) ? showNormal : true;
+            _resizable = isDef(resizable) ? resizable : true; //_rotatable = isDef(rotatable) ? rotatable : true;
+
+            _custom = _typeof(custom) === 'object' && custom || null; //_rotatorAnchor = rotatorAnchor || null;
+            // _rotatorOffset = rotatorOffset || 50; 
+            // _showNormal = isDef(showNormal) ? showNormal : true;
+
             _resizeHandles = isDef(resizeHandles) ? resizeHandles : null;
             _className = isDef(className) ? className : null;
             _onInit = createMethod(onInit);
             _onDrop = createMethod(onDrop);
             _onMove = createMethod(onMove);
-            _onResize = createMethod(onResize);
-            _onRotate = createMethod(onRotate);
+            _onResize = createMethod(onResize); //_onRotate = createMethod(onRotate);
+
             _onDestroy = createMethod(onDestroy);
           }
 
           this.options = {
             axis: _axis,
             cursorMove: _cursorMove,
-            cursorRotate: _cursorRotate,
+            //cursorRotate: _cursorRotate,
             cursorResize: _cursorResize,
-            rotationPoint: _rotationPoint,
+            //rotationPoint: _rotationPoint,
             restrict: _restrict,
             container: _container,
             snap: _snap,
@@ -1075,11 +1064,11 @@
             proportions: _proportions,
             draggable: _draggable,
             resizable: _resizable,
-            rotatable: _rotatable,
+            //rotatable: _rotatable,
             custom: _custom,
-            rotatorAnchor: _rotatorAnchor,
-            rotatorOffset: _rotatorOffset,
-            showNormal: _showNormal,
+            //rotatorAnchor: _rotatorAnchor,
+            //rotatorOffset: _rotatorOffset,
+            //showNormal: _showNormal,
             resizeHandles: _resizeHandles,
             className: _className
           };
@@ -1088,7 +1077,7 @@
             onDrop: _onDrop,
             onMove: _onMove,
             onResize: _onResize,
-            onRotate: _onRotate,
+            //onRotate: _onRotate,
             onDestroy: _onDestroy
           };
           this.subscribe(_each);
@@ -1110,19 +1099,15 @@
               clientY = storage.clientY,
               doDrag = storage.doDrag,
               doResize = storage.doResize,
-              doRotate = storage.doRotate,
-              doSetCenter = storage.doSetCenter,
               revX = storage.revX,
               revY = storage.revY;
           var snap = options.snap,
               _options$each = options.each,
               moveEach = _options$each.move,
               resizeEach = _options$each.resize,
-              rotateEach = _options$each.rotate,
               restrict = options.restrict,
               draggable = options.draggable,
-              resizable = options.resizable,
-              rotatable = options.rotatable;
+              resizable = options.resizable;
 
           if (doResize && resizable) {
             var transform = storage.transform,
@@ -1208,40 +1193,54 @@
               observable.notify('onmove', self, _args);
             }
           }
-
+          /*
           if (doRotate && rotatable) {
-            var pressang = storage.pressang,
-                center = storage.center;
-            var radians = Math.atan2(clientY - center.y, clientX - center.x) - pressang;
-            var _args2 = {
-              clientX: clientX,
-              clientY: clientY
-            };
-
-            self._rotate(_objectSpread2({
-              radians: snapToGrid(radians, snap.angle)
-            }, _args2));
-
-            if (rotateEach) {
-              observable.notify('onrotate', self, _objectSpread2({
-                radians: radians
-              }, _args2));
-            }
+              const {
+                  pressang,
+                  center
+              } = storage;
+                const radians = Math.atan2(
+                  clientY - center.y,
+                  clientX - center.x
+              ) - pressang;
+                const args = {
+                  clientX,
+                  clientY
+              };
+                self._rotate(
+                  {
+                      radians: snapToGrid(radians, snap.angle),
+                      ...args
+                  }
+              );
+                if (rotateEach) {
+                  observable.notify('onrotate',
+                      self,
+                      {
+                          radians,
+                          ...args
+                      }
+                  );
+              }
           }
-
-          if (doSetCenter && rotatable) {
-            var bx = storage.bx,
-                by = storage.by;
-
-            var _this$_pointToControl = this._pointToControls({
-              x: clientX,
-              y: clientY
-            }),
-                _x = _this$_pointToControl.x,
-                _y = _this$_pointToControl.y;
-
-            self._moveCenterHandle(_x - bx, _y - by);
+            if (doSetCenter && rotatable) {
+              const {
+                  bx,
+                  by
+              } = storage;
+                const { x, y } = this._pointToControls(
+                  {
+                      x: clientX,
+                      y: clientY
+                  }
+              );
+                self._moveCenterHandle(
+                  x - bx,
+                  y - by
+              );
           }
+          */
+
         }
       }, {
         key: "_start",
@@ -1271,17 +1270,21 @@
               doH = computed.doH;
           var doResize = onRightEdge || onBottomEdge || onTopEdge || onLeftEdge;
           var handles = storage.handles;
-          var rotator = handles.rotator,
-              center = handles.center,
-              radius = handles.radius;
+          var radius = handles.radius;
 
           if (isDef(radius)) {
             removeClass(radius, 'sjx-hidden');
-          }
+          } //const doRotate = handle.is(rotator),
+          //    doSetCenter = isDef(center)
+          //        ? handle.is(center)
+          //        : false;
 
-          var doRotate = handle.is(rotator),
-              doSetCenter = isDef(center) ? handle.is(center) : false;
-          var doDrag = !(doRotate || doResize || doSetCenter);
+
+          var doDrag = !
+          /*doRotate ||*/
+          doResize
+          /*|| doSetCenter*/
+          ;
           var clientX = e.clientX,
               clientY = e.clientY;
 
@@ -1299,12 +1302,12 @@
               nx = _this$_pointToElement2.x,
               ny = _this$_pointToElement2.y;
 
-          var _this$_pointToControl2 = this._pointToControls({
+          var _this$_pointToControl = this._pointToControls({
             x: x,
             y: y
           }),
-              bx = _this$_pointToControl2.x,
-              by = _this$_pointToControl2.y;
+              bx = _this$_pointToControl.x,
+              by = _this$_pointToControl.y;
 
           var newStorageValues = {
             clientX: clientX,
@@ -1317,8 +1320,8 @@
             by: by,
             doResize: doResize,
             doDrag: doDrag,
-            doRotate: doRotate,
-            doSetCenter: doSetCenter,
+            //doRotate,
+            //doSetCenter,
             onExecution: true,
             cursor: null,
             elementOffset: getOffset(el),
@@ -1333,18 +1336,21 @@
           };
 
           if (doResize) {
-            this._emitEvent('resizeStart', eventArgs);
-          } else if (doRotate) {
-            this._emitEvent('rotateStart', eventArgs);
+            this._emitEvent('resizeStart', eventArgs); //} else if (doRotate) {
+            //   this._emitEvent('rotateStart', eventArgs);
+
           } else if (doDrag) {
             this._emitEvent('dragStart', eventArgs);
           }
 
           var move = each.move,
-              resize = each.resize,
-              rotate = each.rotate;
-          var actionName = doResize ? 'resize' : doRotate ? 'rotate' : 'drag';
-          var triggerEvent = doResize && resize || doRotate && rotate || doDrag && move;
+              resize = each.resize;
+          var actionName = doResize ? 'resize' :
+          /*(doRotate ? 'rotate' :*/
+          'drag'; //);
+
+          var triggerEvent = doResize && resize || //(doRotate && rotate) ||
+          doDrag && move;
           observable.notify('ongetstate', this, {
             clientX: clientX,
             clientY: clientY,
@@ -1373,19 +1379,16 @@
           storage.clientX = x;
           storage.clientY = y;
           storage.doDraw = true;
-          var doRotate = storage.doRotate,
-              doDrag = storage.doDrag,
+          var doDrag = storage.doDrag,
               doResize = storage.doResize,
               cursor = storage.cursor;
           var cursorMove = options.cursorMove,
-              cursorResize = options.cursorResize,
-              cursorRotate = options.cursorRotate;
+              cursorResize = options.cursorResize;
 
           if (isUndef(cursor)) {
             if (doDrag) {
-              cursor = cursorMove;
-            } else if (doRotate) {
-              cursor = cursorRotate;
+              cursor = cursorMove; //} else if (doRotate) {
+              //    cursor = cursorRotate;
             } else if (doResize) {
               cursor = cursorResize;
             }
@@ -1397,22 +1400,22 @@
         }
       }, {
         key: "_end",
-        value: function _end(_ref3) {
-          var clientX = _ref3.clientX,
-              clientY = _ref3.clientY;
+        value: function _end(_ref2) {
+          var clientX = _ref2.clientX,
+              clientY = _ref2.clientY;
           var each = this.options.each,
               observable = this.observable,
               storage = this.storage,
               proxyMethods = this.proxyMethods;
           var doResize = storage.doResize,
               doDrag = storage.doDrag,
-              doRotate = storage.doRotate,
               frame = storage.frame,
               radius = storage.handles.radius;
-          var actionName = doResize ? 'resize' : doDrag ? 'drag' : 'rotate';
+          var actionName = doResize ? 'resize' : 'drag'; ///*(doDrag ? */'drag' /*: 'rotate')*/;
+
           storage.doResize = false;
-          storage.doDrag = false;
-          storage.doRotate = false;
+          storage.doDrag = false; //storage.doRotate = false;
+
           storage.doSetCenter = false;
           storage.doDraw = false;
           storage.onExecution = false;
@@ -1427,17 +1430,17 @@
           proxyMethods.onDrop.call(this, eventArgs);
 
           if (doResize) {
-            this._emitEvent('resizeEnd', eventArgs);
-          } else if (doRotate) {
-            this._emitEvent('rotateEnd', eventArgs);
+            this._emitEvent('resizeEnd', eventArgs); //} else if (doRotate) {
+            //    this._emitEvent('rotateEnd', eventArgs);
+
           } else if (doDrag) {
             this._emitEvent('dragEnd', eventArgs);
           }
 
           var move = each.move,
-              resize = each.resize,
-              rotate = each.rotate;
-          var triggerEvent = doResize && resize || doRotate && rotate || doDrag && move;
+              resize = each.resize;
+          var triggerEvent = doResize && resize || //(doRotate && rotate) ||
+          doDrag && move;
           observable.notify('onapply', this, {
             clientX: clientX,
             clientY: clientY,
@@ -1527,18 +1530,18 @@
         value: function notifyMove() {
           this._drag.apply(this, arguments);
         }
-      }, {
-        key: "notifyRotate",
-        value: function notifyRotate(_ref4) {
-          var radians = _ref4.radians,
-              rest = _objectWithoutProperties(_ref4, ["radians"]);
+        /*notifyRotate({ radians, ...rest }) {
+            const {
+                snap: { angle }
+            } = this.options;
+              this._rotate(
+                {
+                    radians: snapToGrid(radians, angle),
+                    ...rest
+                }
+            );
+        }*/
 
-          var angle = this.options.snap.angle;
-
-          this._rotate(_objectSpread2({
-            radians: snapToGrid(radians, angle)
-          }, rest));
-        }
       }, {
         key: "notifyResize",
         value: function notifyResize() {
@@ -1546,11 +1549,11 @@
         }
       }, {
         key: "notifyApply",
-        value: function notifyApply(_ref5) {
-          var clientX = _ref5.clientX,
-              clientY = _ref5.clientY,
-              actionName = _ref5.actionName,
-              triggerEvent = _ref5.triggerEvent;
+        value: function notifyApply(_ref3) {
+          var clientX = _ref3.clientX,
+              clientY = _ref3.clientY,
+              actionName = _ref3.actionName,
+              triggerEvent = _ref3.triggerEvent;
           this.proxyMethods.onDrop.call(this, {
             clientX: clientX,
             clientY: clientY
@@ -1567,12 +1570,12 @@
         }
       }, {
         key: "notifyGetState",
-        value: function notifyGetState(_ref6) {
-          var clientX = _ref6.clientX,
-              clientY = _ref6.clientY,
-              actionName = _ref6.actionName,
-              triggerEvent = _ref6.triggerEvent,
-              rest = _objectWithoutProperties(_ref6, ["clientX", "clientY", "actionName", "triggerEvent"]);
+        value: function notifyGetState(_ref4) {
+          var clientX = _ref4.clientX,
+              clientY = _ref4.clientY,
+              actionName = _ref4.actionName,
+              triggerEvent = _ref4.triggerEvent,
+              rest = _objectWithoutProperties(_ref4, ["clientX", "clientY", "actionName", "triggerEvent"]);
 
           if (triggerEvent) {
             var recalc = this._getState(rest);
@@ -1587,15 +1590,16 @@
         }
       }, {
         key: "subscribe",
-        value: function subscribe(_ref7) {
-          var resize = _ref7.resize,
-              move = _ref7.move,
-              rotate = _ref7.rotate;
+        value: function subscribe(_ref5) {
+          var resize = _ref5.resize,
+              move = _ref5.move;
           var ob = this.observable;
 
-          if (move || resize || rotate) {
-            ob.subscribe('ongetstate', this).subscribe('onapply', this);
-          }
+          if (move || resize
+          /*|| rotate*/
+          ) {
+              ob.subscribe('ongetstate', this).subscribe('onapply', this);
+            }
 
           if (move) {
             ob.subscribe('onmove', this);
@@ -1603,17 +1607,16 @@
 
           if (resize) {
             ob.subscribe('onresize', this);
-          }
+          } //if (rotate) {
+          //    ob.subscribe('onrotate', this);
+          //}
 
-          if (rotate) {
-            ob.subscribe('onrotate', this);
-          }
         }
       }, {
         key: "unsubscribe",
         value: function unsubscribe() {
           var ob = this.observable;
-          ob.unsubscribe('ongetstate', this).unsubscribe('onapply', this).unsubscribe('onmove', this).unsubscribe('onresize', this).unsubscribe('onrotate', this);
+          ob.unsubscribe('ongetstate', this).unsubscribe('onapply', this).unsubscribe('onmove', this).unsubscribe('onresize', this); //.unsubscribe('onrotate', this);
         }
       }, {
         key: "disable",
@@ -1639,9 +1642,9 @@
         }
       }, {
         key: "exeDrag",
-        value: function exeDrag(_ref8) {
-          var dx = _ref8.dx,
-              dy = _ref8.dy;
+        value: function exeDrag(_ref6) {
+          var dx = _ref6.dx,
+              dy = _ref6.dy;
           var draggable = this.options.draggable;
           if (!draggable) return;
           this.storage = _objectSpread2({}, this.storage, {}, this._getState({
@@ -1660,13 +1663,13 @@
         }
       }, {
         key: "exeResize",
-        value: function exeResize(_ref9) {
-          var dx = _ref9.dx,
-              dy = _ref9.dy,
-              revX = _ref9.revX,
-              revY = _ref9.revY,
-              doW = _ref9.doW,
-              doH = _ref9.doH;
+        value: function exeResize(_ref7) {
+          var dx = _ref7.dx,
+              dy = _ref7.dy,
+              revX = _ref7.revX,
+              revY = _ref7.revY,
+              doW = _ref7.doW,
+              doH = _ref7.doH;
           var resizable = this.options.resizable;
           if (!resizable) return;
           this.storage = _objectSpread2({}, this.storage, {}, this._getState({
@@ -1683,25 +1686,22 @@
 
           this._apply('resize');
         }
-      }, {
-        key: "exeRotate",
-        value: function exeRotate(_ref10) {
-          var delta = _ref10.delta;
-          var rotatable = this.options.rotatable;
-          if (!rotatable) return;
-          this.storage = _objectSpread2({}, this.storage, {}, this._getState({
-            revX: false,
-            revY: false,
-            doW: false,
-            doH: false
-          }));
+        /*exeRotate({ delta }) {
+            const { rotatable } = this.options;
+            if (!rotatable) return;
+              this.storage = {
+                ...this.storage,
+                ...this._getState({
+                    revX: false,
+                    revY: false,
+                    doW: false,
+                    doH: false
+                })
+            };
+              this._rotate({ radians: delta });
+            this._apply('rotate');
+        }*/
 
-          this._rotate({
-            radians: delta
-          });
-
-          this._apply('rotate');
-        }
       }]);
 
       return Transformable;
@@ -1912,11 +1912,8 @@
         key: "_init",
         value: function _init(el) {
           var _this$options = this.options,
-              rotationPoint = _this$options.rotationPoint,
               container = _this$options.container,
               resizable = _this$options.resizable,
-              rotatable = _this$options.rotatable,
-              showNormal = _this$options.showNormal,
               resizeHandles = _this$options.resizeHandles,
               className = _this$options.className;
           var _el$style = el.style,
@@ -1951,15 +1948,19 @@
             bc: ['sjx-hdl', 'sjx-hdl-b', 'sjx-hdl-c', 'sjx-hdl-bc'],
             ml: ['sjx-hdl', 'sjx-hdl-m', 'sjx-hdl-l', 'sjx-hdl-ml'],
             mr: ['sjx-hdl', 'sjx-hdl-m', 'sjx-hdl-r', 'sjx-hdl-mr']
-          };
-          var rotationHandles = {
-            normal: showNormal ? ['sjx-normal'] : null,
-            rotator: ['sjx-hdl', 'sjx-hdl-m', 'sjx-rotator']
-          };
+          }; //const rotationHandles = {
+          //    normal: showNormal ? ['sjx-normal'] : null,
+          //    rotator: ['sjx-hdl', 'sjx-hdl-m', 'sjx-rotator']
+          //};
 
-          var handles = _objectSpread2({}, rotatable && rotationHandles, {}, resizable && resizingHandles, {
-            center: rotationPoint && rotatable ? ['sjx-hdl', 'sjx-hdl-m', 'sjx-hdl-c', 'sjx-hdl-mc'] : undefined
-          });
+          var handles = _objectSpread2({}, resizable && resizingHandles); //const handles = {
+          //    //...(rotatable && rotationHandles),
+          //    ...(resizable && resizingHandles),
+          //    //center: rotationPoint && rotatable
+          //    //    ? ['sjx-hdl', 'sjx-hdl-m', 'sjx-hdl-c', 'sjx-hdl-mc'] 
+          //    //    : undefined
+          //};
+
 
           Object.keys(handles).forEach(function (key) {
             var dt = resizeHandles[key];
@@ -1969,15 +1970,13 @@
             var handler = createHandler(data);
             handles[key] = handler;
             controls.appendChild(handler);
-          });
-
-          if (isDef(handles.center)) {
-            var cHandle = helper(handles.center);
-            cHandle.css({
-              left: "".concat(el.getAttribute('data-cx'), "px"),
-              top: "".concat(el.getAttribute('data-cy'), "px")
-            });
-          }
+          }); //if (isDef(handles.center)) {
+          //    const cHandle = helper(handles.center);
+          //    cHandle.css({
+          //        left: `${el.getAttribute('data-cx')}px`,
+          //        top: `${el.getAttribute('data-cy')}px`
+          //    });
+          //}
 
           wrapper.appendChild(controls);
           var $controls = helper(controls);
@@ -2156,32 +2155,56 @@
           };
           return nMatrix;
         }
-      }, {
-        key: "_processRotate",
-        value: function _processRotate(radians) {
-          var el = this.el,
-              _this$storage = this.storage,
-              controls = _this$storage.controls,
-              transform = _this$storage.transform,
-              center = _this$storage.center;
-          var matrix = transform.matrix,
-              parentMatrix = transform.parentMatrix;
-          var cos = floatToFixed(Math.cos(radians), 4),
-              sin = floatToFixed(Math.sin(radians), 4);
-          var translateMatrix = [1, 0, 0, 1, center.cx, center.cy];
-          var rotMatrix = [cos, sin, -sin, cos, 0, 0];
-
-          var pctm = _toConsumableArray(parentMatrix);
-
-          pctm[4] = pctm[5] = 0;
-          var resRotMatrix = multiplyMatrix(matrixInvert(pctm), multiplyMatrix(rotMatrix, pctm));
-          var nMatrix = multiplyMatrix(multiplyMatrix(translateMatrix, resRotMatrix), matrixInvert(translateMatrix));
-          var resMatrix = multiplyMatrix(nMatrix, matrix);
-          var css = matrixToCSS(resMatrix);
-          helper(controls).css(css);
-          helper(el).css(css);
-          return resMatrix;
+        /*
+        _processRotate(radians) {
+            const {
+                el,
+                storage: {
+                    controls,
+                    transform,
+                    center
+                }
+            } = this;
+              const {
+                matrix,
+                parentMatrix
+            } = transform;
+              const cos = floatToFixed(Math.cos(radians), 4),
+                sin = floatToFixed(Math.sin(radians), 4);
+              const translateMatrix = [
+                1,
+                0,
+                0,
+                1,
+                center.cx,
+                center.cy
+            ];
+              const rotMatrix = [
+                cos,
+                sin,
+                -sin,
+                cos,
+                0,
+                0
+            ];
+              const pctm = [...parentMatrix];
+            pctm[4] = pctm[5] = 0;
+              const resRotMatrix = multiplyMatrix(
+                matrixInvert(pctm),
+                multiplyMatrix(rotMatrix, pctm)
+            );
+              const nMatrix = multiplyMatrix(
+                multiplyMatrix(translateMatrix, resRotMatrix),
+                matrixInvert(translateMatrix)
+            );
+              const resMatrix = multiplyMatrix(nMatrix, matrix);
+              const css = matrixToCSS(resMatrix);
+              helper(controls).css(css);
+            helper(el).css(css);
+              return resMatrix;
         }
+        */
+
       }, {
         key: "_getState",
         value: function _getState(params) {
@@ -2191,10 +2214,10 @@
               doH = params.doH;
           var factor = revX !== revY ? -1 : 1;
           var el = this.el,
-              _this$storage2 = this.storage,
-              handles = _this$storage2.handles,
-              controls = _this$storage2.controls,
-              parent = _this$storage2.parent,
+              _this$storage = this.storage,
+              handles = _this$storage.handles,
+              controls = _this$storage.controls,
+              parent = _this$storage.parent,
               container = this.options.container;
           var cHandle = handles.center;
           var $controls = helper(controls);
@@ -2252,11 +2275,11 @@
       }, {
         key: "_moveCenterHandle",
         value: function _moveCenterHandle(x, y) {
-          var _this$storage3 = this.storage,
-              center = _this$storage3.handles.center,
-              _this$storage3$center = _this$storage3.center,
-              hx = _this$storage3$center.hx,
-              hy = _this$storage3$center.hy;
+          var _this$storage2 = this.storage,
+              center = _this$storage2.handles.center,
+              _this$storage2$center = _this$storage2.center,
+              hx = _this$storage2$center.hx,
+              hy = _this$storage2$center.hy;
           var left = "".concat(hx + x, "px"),
               top = "".concat(hy + y, "px");
           helper(center).css({
@@ -2264,15 +2287,19 @@
             top: top
           });
         }
-      }, {
-        key: "resetCenterPoint",
-        value: function resetCenterPoint() {
-          var center = this.storage.handles.center;
-          helper(center).css({
-            left: null,
-            top: null
-          });
-        }
+        /*
+        resetCenterPoint() {
+            const {
+                handles: { center }
+            } = this.storage;
+              helper(center).css(
+                {
+                    left: null,
+                    top: null
+                }
+            );
+        }*/
+
       }, {
         key: "fitControlsToSize",
         value: function fitControlsToSize() {}
