@@ -91,6 +91,8 @@ export default class Transformable extends SubjectModel {
             _rotatorOffset = 50,
             _showNormal = true,
             _custom = null,
+            _resizeHandles = null,
+            _className = null,
             _onInit = () => { },
             _onMove = () => { },
             _onRotate = () => { },
@@ -124,7 +126,9 @@ export default class Transformable extends SubjectModel {
                 custom,
                 rotatorAnchor,
                 rotatorOffset,
-                showNormal
+                showNormal,
+                resizeHandles,
+                className
             } = options;
 
             if (isDef(snap)) {
@@ -171,6 +175,8 @@ export default class Transformable extends SubjectModel {
             _rotatorAnchor = rotatorAnchor || null;
             _rotatorOffset = rotatorOffset || 50;
             _showNormal = isDef(showNormal) ? showNormal : true;
+            _resizeHandles = isDef(resizeHandles) ? resizeHandles : null;
+            _className = isDef(className) ? className : null;
 
             _onInit = createMethod(onInit);
             _onDrop = createMethod(onDrop);
@@ -197,7 +203,9 @@ export default class Transformable extends SubjectModel {
             custom: _custom,
             rotatorAnchor: _rotatorAnchor,
             rotatorOffset: _rotatorOffset,
-            showNormal: _showNormal
+            showNormal: _showNormal,
+            resizeHandles:_resizeHandles,
+            className:_className
         };
 
         this.proxyMethods = {

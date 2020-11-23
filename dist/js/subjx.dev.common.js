@@ -711,6 +711,8 @@ class Transformable extends SubjectModel {
             _rotatorOffset = 50,
             _showNormal = true,
             _custom = null,
+            _resizeHandles = null,
+            _className = null,
             _onInit = () => { },
             _onMove = () => { },
             _onRotate = () => { },
@@ -744,7 +746,9 @@ class Transformable extends SubjectModel {
                 custom,
                 rotatorAnchor,
                 rotatorOffset,
-                showNormal
+                showNormal,
+                resizeHandles,
+                className
             } = options;
 
             if (isDef(snap)) {
@@ -791,6 +795,8 @@ class Transformable extends SubjectModel {
             _rotatorAnchor = rotatorAnchor || null;
             _rotatorOffset = rotatorOffset || 50;
             _showNormal = isDef(showNormal) ? showNormal : true;
+            _resizeHandles = isDef(resizeHandles) ? resizeHandles : null;
+            _className = isDef(className) ? className : null;
 
             _onInit = createMethod(onInit);
             _onDrop = createMethod(onDrop);
@@ -817,7 +823,9 @@ class Transformable extends SubjectModel {
             custom: _custom,
             rotatorAnchor: _rotatorAnchor,
             rotatorOffset: _rotatorOffset,
-            showNormal: _showNormal
+            showNormal: _showNormal,
+            resizeHandles:_resizeHandles,
+            className:_className
         };
 
         this.proxyMethods = {
@@ -1771,7 +1779,9 @@ class Draggable extends Transformable {
             container,
             resizable,
             rotatable,
-            showNormal
+            showNormal,
+            resizeHandles,
+            className
         } = this.options;
 
         const {
@@ -1783,6 +1793,8 @@ class Draggable extends Transformable {
 
         const wrapper = document.createElement('div');
         addClass(wrapper, 'sjx-wrapper');
+        if (isDef(className)) addClass(wrapper, className);
+
         container.appendChild(wrapper);
 
         const $el = helper(el);
@@ -1828,6 +1840,8 @@ class Draggable extends Transformable {
         };
 
         Object.keys(handles).forEach(key => {
+            const dt=resizeHandles[key];
+            if (isDef(dt) && dt == false) return;
             const data = handles[key];
             if (isUndef(data)) return;
             const handler = createHandler(data);
@@ -2001,19 +2015,37 @@ class Draggable extends Transformable {
             revX,
             revY,
             doW,
-            doH
+            doH,
+            restrictOffset,
+            handle
         } = storage;
 
         const ratio = doW || (!doW && !doH)
             ? (cw + dx) / cw
             : (ch + dy) / ch;
 
-        const newWidth = proportions ? cw * ratio : cw + dx,
+        let newWidth = proportions ? cw * ratio : cw + dx,
             newHeight = proportions ? ch * ratio : ch + dy;
 
         if (newWidth <= MIN_SIZE || newHeight <= MIN_SIZE) return;
 
         const matrix = [...transform.matrix];
+
+        if (isDef(restrictOffset)){
+            if (dx > 0 ){
+                if (handle[0].className.indexOf("sjx-hdl-l") > -1 ){
+                    if (matrix[4] - dx < 0)  newWidth = cw + matrix[4];
+                }
+                else if (newWidth +  matrix[4] > restrictOffset.width)  newWidth = restrictOffset.width - matrix[4];
+            }
+
+            if( dy > 0 ){
+                if (handle[0].className.indexOf("sjx-hdl-l") > -1){
+                    if (matrix[5] - dx < 0)  newWidth = ch + matrix[5];
+                }
+                else if (newHeight +  matrix[5] > restrictOffset.height) newHeight = restrictOffset.height - matrix[5];
+            }
+        }
 
         const newCoords = rotatedTopLeft(
             matrix[4],
